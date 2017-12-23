@@ -8,7 +8,7 @@ global result_dir;
 % vertices in SMPL model
 n_smpl = size(smpl_model.v_template, 1);
 
-max_iter = 100;
+max_iter = 50;
 if_shape = 1;
 
 % not first frame
