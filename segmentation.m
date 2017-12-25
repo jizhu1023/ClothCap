@@ -8,7 +8,7 @@ addpath('segmentation');
 addpath('segmentation/prior');
 
 mesh_folder = ['scans', filesep, 'ly-apose_texture'];
-mesh_scan_name = 'ly-apose_texture_%08d_gop.obj';
+mesh_format = 'ly-apose_texture_%08d_gop.obj';
 
 frame_start = 1;
 frame_end = 10;
@@ -32,25 +32,33 @@ for frame = frame_start : frame_start
         is_first = 0;
     end
     
-    mesh_scan_name = sprintf(mesh_scan_name, frame);
-    mesh_prefix = mesh_scan_name(1:end-4);
+    mesh_prefix = sprintf(mesh_format, frame);
+    mesh_prefix = mesh_prefix(1:end-4);
     disp(['Segmentation ', mesh_prefix, ' ...']);
     
-    mesh_smpl_name = [sprintf(mesh_prefix, frame), '_aligned_SMPL.obj'];
-    mesh_smpl_folder = ['all_results/single_mesh', filesep, mesh_prefix];
-    
-    result_dir = ['all_results/segmentation', filesep, mesh_prefix];
+    result_dir = ['all_results', filesep, 'segmentation', filesep, mesh_prefix];
     mkdir(result_dir);
     
+    mesh_scan_name = [mesh_prefix, '.obj'];
+    mesh_scan_folder = ['scans', filesep, 'ly-apose_texture'];
+    
+    mesh_smpl_name = [sprintf(mesh_prefix, frame), '_aligned_SMPL.obj'];
+    mesh_smpl_folder = ['all_results', filesep, 'single_mesh', filesep, mesh_prefix];
+    
     % load scan mesh
-    mesh_scan = mesh_parser(mesh_scan_name, mesh_folder);
+    mesh_scan = mesh_parser(mesh_scan_name, mesh_scan_folder);
+    mesh_scan.vertices = mesh_scan.vertices ./ 1000;
     mesh_scan.colors = render_texture(mesh_scan.tex_coords, mesh_scan.uv_map);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_colored.obj'], mesh_scan, true);
     
     % load single mesh alignment
     mesh_smpl = mesh_parser(mesh_smpl_name, mesh_smpl_folder);
     
+    % get unary
+    unary = get_unary(mesh_scan, mesh_smpl, prior, 3);
     
-    a = 0;
+    
+    
     
     
 end

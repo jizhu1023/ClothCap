@@ -1,0 +1,3 @@
+[submodule "3rdparty/meanfield-matlab"]
+	path = 3rdparty/meanfield-matlab
+	url = https://github.com/johannesu/meanfield-matlab.git

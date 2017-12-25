@@ -16,4 +16,4 @@ find_package(OpenMesh REQUIRED)
 include_directories(${OPENMESH_INCLUDE_DIRS})
 link_libraries(${OPENMESH_LIBRARIES})
 
-add_executable(mesh_parser main.cpp)
+add_executable(mesh_parser main.cpp mesh_parser.cpp)
