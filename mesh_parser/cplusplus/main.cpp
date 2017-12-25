@@ -1,5 +1,8 @@
 #include "mesh_parser.h"
 
+#include <fstream>
+#include <iostream>
+
 int main(int argc, char** argv)
 {
     if (argc != 2)

@@ -4,6 +4,7 @@ clc;
 
 addpath('smpl_model');
 addpath('mesh_parser');
+addpath('single_mesh_alignment')
 
 mesh_folder = ['scans', filesep, 'celina-s2-t9-b4_texture'];
 mesh_name = 'celina-s2-t9-b4_texture_%08d_gop.obj';
