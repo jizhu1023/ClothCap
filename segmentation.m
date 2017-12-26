@@ -57,8 +57,12 @@ for frame = frame_start : frame_start
     % get unary
     unary = get_unary(mesh_scan, mesh_smpl, prior, 3);
     
+    % meanfield densecrf
+    seg_result = meanfield(unary, mesh_smpl);
     
-    
-    
+    % render result
+    mesh_smpl_final = mesh_smpl;
+    mesh_smpl_final.colors = render_result(seg_result);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_seg.obj'], mesh_smpl_final, true);
     
 end
