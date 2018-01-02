@@ -4,8 +4,9 @@ clc;
 
 addpath('smpl_model');
 addpath('mesh_parser');
+
 addpath('segmentation');
-addpath('segmentation/prior');
+addpath('3rdparty/gco-v3.0/matlab');
 
 mesh_folder = ['scans', filesep, 'ly-apose_texture'];
 mesh_format = 'ly-apose_texture_%08d_gop.obj';
@@ -22,7 +23,8 @@ global result_dir;
 smpl_model = load('smpl_m.mat');
 smpl_model = smpl_model.model;
 
-prior = get_prior();
+% get smpl prior
+prior_smpl = get_smpl_prior();
 
 for frame = frame_start : frame_start
     % for first frame
@@ -54,15 +56,24 @@ for frame = frame_start : frame_start
     % load single mesh alignment
     mesh_smpl = mesh_parser(mesh_smpl_name, mesh_smpl_folder);
     
+    % calculate scan prior
+    prior_scan = get_scan_prior(mesh_smpl, mesh_scan, prior_smpl);
+    
     % get unary
-    unary = get_unary(mesh_scan, mesh_smpl, prior, 3);
+    [unary_scan, unary_smpl] = calculate_unary(mesh_scan, mesh_smpl, prior_scan, prior_smpl);
     
     % meanfield densecrf
-    seg_result = meanfield(unary, mesh_smpl);
+    [seg_scan, seg_smpl] = meanfield(mesh_scan, mesh_smpl, unary_scan, unary_smpl);
+    
+    % manually modify the result
+    [seg_scan, seg_smpl] = manually_modify(mesh_scan, mesh_smpl, seg_scan, seg_smpl);
     
     % render result
+    mesh_scan_final = mesh_scan;
+    mesh_scan_final.colors = render_result(seg_scan);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_scan.obj'], mesh_scan_final, true);
     mesh_smpl_final = mesh_smpl;
-    mesh_smpl_final.colors = render_result(seg_result);
-    mesh_exporter([result_dir, filesep, mesh_prefix, '_seg.obj'], mesh_smpl_final, true);
+    mesh_smpl_final.colors = render_result(seg_smpl);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_smpl.obj'], mesh_smpl_final, true);
     
 end
