@@ -6,7 +6,6 @@ addpath('smpl_model');
 addpath('mesh_parser');
 
 addpath('segmentation');
-addpath('3rdparty/gco-v3.0/matlab');
 
 mesh_folder = ['scans', filesep, 'ly-apose_texture'];
 mesh_format = 'ly-apose_texture_%08d_gop.obj';
