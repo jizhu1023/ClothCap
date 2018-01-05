@@ -4,28 +4,22 @@ clc;
 
 addpath('smpl_model');
 addpath('mesh_parser');
-
 addpath('segmentation');
 
-mesh_folder = ['scans', filesep, 'ly-apose_texture'];
-mesh_format = 'ly-apose_texture_%08d_gop.obj';
-
 frame_start = 1;
-frame_end = 10;
+frame_end = 1;
 
 % global varibles used in single mesh alignment
 global is_first;
-global smpl_model;
 global mesh_prefix;
 global result_dir;
 
-smpl_model = load('smpl_m.mat');
-smpl_model = smpl_model.model;
+mesh_format = 'ly-apose_texture_%08d_gop.obj';
 
 % get smpl prior
 prior_smpl = get_smpl_prior();
 
-for frame = frame_start : frame_start
+for frame = frame_start : frame_end
     % for first frame
     if frame == frame_start
         is_first = 1;
@@ -67,7 +61,7 @@ for frame = frame_start : frame_start
     % manually modify the result
     [seg_scan, seg_smpl] = manually_modify(mesh_scan, mesh_smpl, seg_scan, seg_smpl);
     
-    % render result
+    % render and save result
     mesh_scan_final = mesh_scan;
     mesh_scan_final.colors = render_result(seg_scan);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_scan.obj'], mesh_scan_final, true);
@@ -75,4 +69,6 @@ for frame = frame_start : frame_start
     mesh_smpl_final.colors = render_result(seg_smpl);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_smpl.obj'], mesh_smpl_final, true);
     
+    save([result_dir, filesep, mesh_prefix, '_label_scan.mat'], 'seg_scan');
+    save([result_dir, filesep, mesh_prefix, '_label_smpl.mat'], 'seg_smpl');
 end
