@@ -23,6 +23,7 @@ for iter = 1 : 10
     
     options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
         'Display', 'iter-detailed', 'MaxIter', 10);
+    options = optimoptions(options, 'UseParallel', true);
     x_opt = lsqnonlin(@(x) energy_garment(x, mesh_garment_scan, garment_smpl.boundary_ind, ...
         garment_scan.boundary_ind, normals_smpl, normals_scan), L, [], [], options);
     
