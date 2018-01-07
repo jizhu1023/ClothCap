@@ -2,6 +2,7 @@ clear all;
 close all;
 clc;
 
+addpath('common');
 addpath('smpl_model');
 addpath('mesh_parser');
 addpath('segmentation');
@@ -29,7 +30,7 @@ for frame = frame_start : frame_end
     
     mesh_prefix = sprintf(mesh_format, frame);
     mesh_prefix = mesh_prefix(1:end-4);
-    disp(['Segmentation ', mesh_prefix, ' ...']);
+    disp(['segmentation: ', mesh_prefix]);
     
     result_dir = ['all_results', filesep, 'segmentation', filesep, mesh_prefix];
     mkdir(result_dir);
@@ -68,7 +69,11 @@ for frame = frame_start : frame_end
     mesh_smpl_final = mesh_smpl;
     mesh_smpl_final.colors = render_result(seg_smpl);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_smpl.obj'], mesh_smpl_final, true);
-    
     save([result_dir, filesep, mesh_prefix, '_label_scan.mat'], 'seg_scan');
     save([result_dir, filesep, mesh_prefix, '_label_smpl.mat'], 'seg_smpl');
+    
+    % extract and save scan garments
+    [garments_scan, mesh_garments_scan] = extract_garments(mesh_scan, seg_scan);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_garments_scan.obj'], mesh_garments_scan, true);
+    save([result_dir, filesep, mesh_prefix, '_garments_scan.mat'], 'garments_scan');
 end

@@ -8,13 +8,13 @@ MeshParser::MeshParser()
     initialize();
 }
 
-MeshParser::MeshParser(const std::string mesh_name)
+MeshParser::MeshParser(const std::string& mesh_name)
 {
     initialize();
     load(mesh_name);
 }
 
-void MeshParser::load(const std::string mesh_name)
+void MeshParser::load(const std::string& mesh_name)
 {
     if (!OpenMesh::IO::read_mesh(mesh_, mesh_name, opt_))
     {
@@ -29,6 +29,8 @@ void MeshParser::load(const std::string mesh_name)
         mesh_.release_face_normals();
     }
 
+    max_vert_face_num = 0;
+    max_vert_edge_num = 0;
     // parse obj file
     for (auto v_it = mesh_.vertices_begin(); v_it != mesh_.vertices_end(); ++v_it)
     {
@@ -36,6 +38,22 @@ void MeshParser::load(const std::string mesh_name)
             mesh_.point(*v_it).data()[0],
             mesh_.point(*v_it).data()[1],
             mesh_.point(*v_it).data()[2]);
+
+        std::vector<int> faces;
+        for (auto vf_it = mesh_.vf_iter(*v_it); vf_it.is_valid(); ++vf_it)
+            faces.emplace_back(vf_it->idx());
+        vert_faces.insert(std::make_pair(v_it->idx(), faces));
+
+        std::vector<int> edges;
+        for (auto ve_it = mesh_.ve_iter(*v_it); ve_it.is_valid(); ++ve_it)
+            edges.emplace_back(ve_it->idx());
+        vert_edges.insert(std::make_pair(v_it->idx(), edges));
+
+        auto face_n = faces.size();
+        max_vert_face_num = max_vert_face_num < face_n ? face_n : max_vert_face_num;
+
+        auto edge_n = edges.size();
+        max_vert_edge_num = max_vert_edge_num < edge_n ? edge_n : max_vert_edge_num;
     }
 
     for (auto v_it = mesh_.vertices_begin(); v_it != mesh_.vertices_end(); ++v_it)
@@ -60,13 +78,30 @@ void MeshParser::load(const std::string mesh_name)
             vertices_index.emplace_back(fv_it->idx());
         assert(vertices_index.size() == 3);
         faces.emplace_back(vertices_index[0], vertices_index[1], vertices_index[2]);
+
+        std::vector<int> edges_index;
+        for (auto fe_it = mesh_.fe_iter(*f_it); fe_it.is_valid(); ++fe_it)
+            edges_index.emplace_back(fe_it->idx());
+        face_edges.insert(std::make_pair(f_it->idx(), edges_index));
     }
 
-    for (auto he_it = mesh_.halfedges_begin(); he_it != mesh_.halfedges_end(); ++he_it)
+    for (auto e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it)
     {
-        auto from_v = mesh_.from_vertex_handle(*he_it);
-        auto to_v = mesh_.to_vertex_handle(*he_it);
+        auto he0 = mesh_.halfedge_handle(*e_it, 0);
+        auto he1 = mesh_.halfedge_handle(*e_it, 1);
+
+        auto from_v = mesh_.from_vertex_handle(he0);
+        auto to_v = mesh_.to_vertex_handle(he0);
         edges.emplace_back(from_v.idx(), to_v.idx());
+
+        auto face0 = mesh_.face_handle(he0);
+        auto face1 = mesh_.face_handle(he1);
+        std::vector<int> f;
+        if (face0.is_valid())
+            f.emplace_back(face0.idx());
+        if (face1.is_valid())
+            f.emplace_back(face1.idx());
+        edge_faces.insert(std::make_pair(e_it->idx(), f));
     }
 
     std::for_each(edges.begin(), edges.end(), [](glm::ivec2& edge)
@@ -79,6 +114,16 @@ void MeshParser::load(const std::string mesh_name)
         return v1[0] == v2[0] && v1[1] == v2[1];
     });
     edges.erase(p, edges.end());
+
+    std::for_each(vert_faces.begin(), vert_faces.end(), [&](std::pair<const int, std::vector<int>>& pair)
+    {
+        pair.second.resize(max_vert_face_num, -1);
+    });
+
+    std::for_each(vert_edges.begin(), vert_edges.end(), [&](std::pair<const int, std::vector<int>>& pair)
+    {
+        pair.second.resize(max_vert_edge_num, -1);
+    });
 }
 
 void MeshParser::initialize()

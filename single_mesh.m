@@ -2,6 +2,7 @@ clear all;
 close all;
 clc;
 
+addpath('common');
 addpath('smpl_model');
 addpath('mesh_parser');
 addpath('single_mesh_alignment')
@@ -34,7 +35,7 @@ for frame = frame_start : frame_start
     
     mesh_name = sprintf(mesh_name, frame);
     mesh_prefix = mesh_name(1:end-4);
-    disp(['Processing mesh ', mesh_prefix, ' ...']);
+    disp(['single-mesh alignment: ', mesh_prefix]);
     
     mesh = mesh_parser(mesh_name, mesh_folder);
     

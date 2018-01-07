@@ -20,10 +20,6 @@ smpl_model = smpl_model.model;
 
 mesh_format = 'ly-apose_texture_%08d_gop.obj';
 
-% get smpl base mesh
-mesh_smpl = mesh_parser('smpl_base_m.obj', 'smpl_model');
-
-
 for frame = frame_start : frame_end
     % for first frame
     if frame == frame_start
@@ -39,20 +35,22 @@ for frame = frame_start : frame_end
 	result_dir = ['all_results', filesep, 'multi_cloth', filesep, mesh_prefix];
     mkdir(result_dir);
     
+    % load scan label
+    last_folder = ['all_results', filesep, 'segmentation', filesep, mesh_prefix];
+    label_scan = load([last_folder, filesep, mesh_prefix, '_label_scan.mat']);
+    label_scan = label_scan.seg_scan;
+    
 	% load scan mesh
     mesh_scan_name = [mesh_prefix, '.obj'];
     mesh_scan_folder = ['scans', filesep, 'ly-apose_texture'];
-
     mesh_scan = mesh_parser(mesh_scan_name, mesh_scan_folder);
     mesh_scan.vertices = mesh_scan.vertices ./ 1000;
 
-    label_folder = ['all_results', filesep, 'segmentation', filesep, mesh_prefix];
-    % load scan label
-    label_scan = load([label_folder, filesep, mesh_prefix, '_label_scan.mat']);
-    label_scan = label_scan.seg_scan;
-    % load smpl label
-    label_smpl = load([label_folder, filesep, mesh_prefix, '_label_smpl.mat']);
-    label_smpl = label_smpl.seg_smpl;   
-   
+    % load scan garments
+    garments_scan = load([last_folder, filesep, mesh_prefix, '_garments_scan.mat']);
+    garments_scan = garments_scan.garments_scan;
+    
+    % garments fitting
+    garment_fitting(mesh_scan, label_scan, garments_scan);
     
 end
