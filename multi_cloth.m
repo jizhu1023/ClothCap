@@ -2,6 +2,7 @@ clear all;
 close all;
 clc;
 
+addpath('common');
 addpath('smpl_model');
 addpath('mesh_parser');
 addpath('multi_cloth_alignment');
