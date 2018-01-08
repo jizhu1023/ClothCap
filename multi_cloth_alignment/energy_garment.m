@@ -5,7 +5,7 @@ function [energy] = energy_garment(x, mesh_scan, mesh_smpl ,garment_smpl, garmen
     energy = 0;
 
     % first data term
-    mesh_garment_scan = mesh_scan(garment_scan.vertices_ind, :);
+    mesh_garment_scan = mesh_scan.vertices(garment_scan.vertices_ind, :);
     
     normals_scan = mesh_scan.normals(garment_scan.vertices_ind, :);
     normals_smpl = mesh_smpl.normals(garment_smpl.vertices_ind, :);
