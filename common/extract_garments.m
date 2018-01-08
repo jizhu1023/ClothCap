@@ -87,6 +87,11 @@ garments.skin.boundary_ind = boundary_skin;
 garments.shirt.boundary_ind = boundary_shirt;
 garments.pants.boundary_ind = boundary_pants;
 
+% assemble local boundary index
+garments.skin.boundary_local_ind = garment_boundary(boundary_skin, ind_skin);
+garments.shirt.boundary_local_ind = garment_boundary(boundary_shirt, ind_shirt);
+garments.pants.boundary_local_ind = garment_boundary(boundary_pants, ind_pants);
+
 mesh_garments = mesh;
 mesh_garments.faces(boundary_faces, :) = [];
 mesh_garments.colors = render_labels(label);

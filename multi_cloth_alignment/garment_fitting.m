@@ -32,8 +32,8 @@ if is_first == 1
     save([result_dir, filesep, mesh_prefix, '_garments_smpl.mat'], 'garments_smpl');
     
     % for skin    
-    align_garment(garments_scan.skin, garments_smpl.skin, ...
-        mesh_scan, mesh_smpl, label_smpl, smpl_param, 'skin');
+%     align_garment(garments_scan.skin, garments_smpl.skin, ...
+%         mesh_scan, mesh_smpl, label_smpl, smpl_param, 'skin');
     
     % for shirt    
     align_garment(garments_scan.shirt, garments_smpl.shirt, ...

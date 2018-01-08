@@ -17,15 +17,13 @@ mesh_smpl_tmp = mesh_smpl;
 
 for iter = 1 : 10
     mesh_smpl_tmp.vertices(garment_smpl.vertices_ind, :) = L;
-    normals_smpl = calNormal(mesh_smpl_tmp.faces, mesh_smpl_tmp.vertices);
-    normals_smpl = normals_smpl(garment_smpl.vertices_ind, :);
-    normals_scan = mesh_scan.normals(garment_scan.vertices_ind, :);
+    mesh_smpl_tmp.normals = calNormal(mesh_smpl_tmp.faces, mesh_smpl_tmp.vertices);
     
     options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
         'Display', 'iter-detailed', 'MaxIter', 10);
     options = optimoptions(options, 'UseParallel', true);
-    x_opt = lsqnonlin(@(x) energy_garment(x, mesh_garment_scan, garment_smpl.boundary_ind, ...
-        garment_scan.boundary_ind, normals_smpl, normals_scan), L, [], [], options);
+    x_opt = lsqnonlin(@(x) energy_garment(x, mesh_scan, mesh_smpl_tmp, ...
+        garment_smpl, garment_scan), L, [], [], options);
     
     mesh_name_full = sprintf(['mesh_garment_', garment_prefix, '_full_iter_%02d.obj'], iter);
     mesh_name_part = sprintf(['mesh_garment_', garment_prefix, '_iter_%02d.obj'], iter);
