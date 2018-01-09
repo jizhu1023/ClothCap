@@ -4,10 +4,10 @@ function [energy] = energy_garment(x, mesh_scan, mesh_smpl ,garment_smpl, garmen
     sigma = 0.1;
     energy = 0;
     
-    w_g = 1000;
-    w_b = 20;
+    w_g = 1;
+    w_b = 1;
     w_c = 1.5;
-    w_s = 200;
+    w_s = 20;
     w_a = 20;
 
     % first data term

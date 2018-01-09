@@ -54,7 +54,7 @@ boundary_skin = unique(boundary_skin);
 boundary_shirt = boundary_shirt(1:n_boundary_shirt-1, :);
 boundary_shirt = unique(boundary_shirt);
 
-boundary_pants = boundary_faces(1:n_boundary_pants-1, :);
+boundary_pants = boundary_pants(1:n_boundary_pants-1, :);
 boundary_pants = unique(boundary_pants);
 
 boundary_faces = boundary_faces(1:n_boundary_faces-1, :);
