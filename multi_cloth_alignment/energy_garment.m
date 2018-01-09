@@ -70,6 +70,7 @@ function [energy] = energy_garment(x, mesh_scan, mesh_smpl ,garment_smpl, garmen
     error_laplacian = norm(product, 'fro');
     energy = energy + w_s * error_laplacian;
     
+    % the fifth boundary smoothness term
     
 
 end
