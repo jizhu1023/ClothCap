@@ -37,6 +37,15 @@ mesh.edge_faces = edge_faces;
 mesh.vert_faces = vert_faces;
 mesh.vert_edges = vert_edges;
 
+n_edges = size(edges, 1);
+n_vertices = size(vertices, 1);
+adjacency_map = zeros(n_vertices, n_vertices);
+for i = 1 : n_edges
+    adjacency_map(edges(i, 1), edges(i, 2)) = 1;
+    adjacency_map(edges(i, 2), edges(i, 1)) = 1;
+end
+mesh.adjacency_map = adjacency_map;
+
 delete('*.mesh');
 
 cd('..')

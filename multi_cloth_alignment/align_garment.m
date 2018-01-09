@@ -7,12 +7,7 @@ global result_dir;
 tmp_result_folder = [result_dir, filesep, mesh_prefix, '_garment_', garment_prefix];
 mkdir(tmp_result_folder);
 
-mesh_garment_smpl = mesh_smpl.vertices(garment_smpl.vertices_ind, :);
-mesh_garment_scan = mesh_scan.vertices(garment_scan.vertices_ind, :);
-
-% [~, pose, ~, ~] = divideParam(smpl_param);
-
-L = mesh_garment_smpl;
+L = mesh_smpl.vertices(garment_smpl.vertices_ind, :);
 mesh_smpl_tmp = mesh_smpl;
 
 for iter = 1 : 10
