@@ -3,6 +3,12 @@ function [energy] = energy_garment(x, mesh_scan, mesh_smpl ,garment_smpl, garmen
    
     sigma = 0.1;
     energy = 0;
+    
+    w_g = 1000;
+    w_b = 20;
+    w_c = 1.5;
+    w_s = 200;
+    w_a = 20;
 
     % first data term
     mesh_scan_garment = mesh_scan.vertices(garment_scan.vertices_ind, :);
@@ -24,9 +30,9 @@ function [energy] = energy_garment(x, mesh_scan, mesh_smpl ,garment_smpl, garmen
     error_d2m = nearest_pts_d2m - L(nearest_ind_d2m, :);
     error_m2d = nearest_pts_m2d - L(mask_m2d, :);
     
-    energy = energy + ...
+    energy = energy + w_g * (...
         sum(sum(error_d2m.^2 ./ (error_d2m.^2 + sigma^2))) + ...
-        sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2)));
+        sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2))));
     
     % second boundary term 
     mesh_smpl_boundary = L(garment_smpl.boundary_local_ind, :);
@@ -46,11 +52,24 @@ function [energy] = energy_garment(x, mesh_scan, mesh_smpl ,garment_smpl, garmen
     mask_m2d = find(error_n > 0);
     nearest_pts_m2d = nearest_pts_m2d(mask_m2d, :);
     
-    error = nearest_pts_d2m - mesh_smpl_boundary(nearest_ind_d2m, :);
-    energy = energy + sum(sum(error.^2 ./ (error.^2 + sigma^2)));
-
-    error = nearest_pts_m2d - mesh_smpl_boundary(mask_m2d, :);
-    energy = energy + sum(sum(error.^2 ./ (error.^2 + sigma^2)));
+    error_d2m = nearest_pts_d2m - mesh_smpl_boundary(nearest_ind_d2m, :);
+    error_m2d = nearest_pts_m2d - mesh_smpl_boundary(mask_m2d, :);
+    energy = energy + w_b * (...
+        sum(sum(error_d2m.^2 ./ (error_d2m.^2 + sigma^2))) + ...
+        sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2))));   
+    
+    % the forth laplacian term:
+    Z = mesh_smpl.adjacency_map( ...
+        garment_smpl.vertices_ind, garment_smpl.vertices_ind);
+    vertices_degree = sum(Z, 2);
+    H = diag(vertices_degree);
+    I = eye(length(vertices_degree));
+    G = I - H \ Z;
+    product = G * L;
+    
+    error_laplacian = norm(product, 'fro');
+    energy = energy + w_s * error_laplacian;
+    
     
 
 end
