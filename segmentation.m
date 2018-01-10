@@ -36,7 +36,7 @@ for frame = frame_start : frame_end
     mkdir(result_dir);
     
     mesh_scan_name = [mesh_prefix, '.obj'];
-    mesh_scan_folder = ['scans', filesep, 'ly-apose_texture'];
+    mesh_scan_folder = ['scans', filesep, 'ly-apose_texture_subdivided'];
     
     mesh_smpl_name = [sprintf(mesh_prefix, frame), '_aligned_SMPL.obj'];
     mesh_smpl_folder = ['all_results', filesep, 'single_mesh', filesep, mesh_prefix];
@@ -60,7 +60,7 @@ for frame = frame_start : frame_end
     [seg_scan, seg_smpl] = meanfield(mesh_scan, mesh_smpl, unary_scan, unary_smpl);
     
     % manually modify the result
-    [seg_scan, seg_smpl] = manually_modify(mesh_scan, mesh_smpl, seg_scan, seg_smpl);
+    [seg_scan, seg_smpl] = manually_modify_sub(mesh_scan, mesh_smpl, seg_scan, seg_smpl);
     
     % render and save result
     mesh_scan_final = mesh_scan;
