@@ -43,7 +43,7 @@ for frame = frame_start : frame_end
     
 	% load scan mesh
     mesh_scan_name = [mesh_prefix, '.obj'];
-    mesh_scan_folder = ['scans', filesep, 'ly-apose_texture'];
+    mesh_scan_folder = ['scans', filesep, 'ly-apose_texture_subdivided'];
     mesh_scan = mesh_parser(mesh_scan_name, mesh_scan_folder);
     mesh_scan.vertices = mesh_scan.vertices ./ 1000;
 
