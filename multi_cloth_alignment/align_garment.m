@@ -16,7 +16,6 @@ for iter = 1 : 10
     
     options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
         'Display', 'iter-detailed', 'MaxIter', 10);
-    options = optimoptions(options, 'UseParallel', true);
     x_opt = lsqnonlin(@(x) energy_garment(x, mesh_scan, mesh_smpl_tmp, ...
         garment_smpl, garment_scan), L, [], [], options);
     
