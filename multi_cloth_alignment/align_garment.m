@@ -1,4 +1,4 @@
-function [mesh_full, mesh_garment] = align_garment(garment_scan, garment_smpl, mesh_scan, mesh_smpl, ...
+function [mesh_full, mesh_garment, pose] = align_garment(garment_scan, garment_smpl, mesh_scan, mesh_smpl, ...
     label_smpl, smpl_param, garment_prefix)
 
 global mesh_prefix;
@@ -40,6 +40,7 @@ for iter = 1 : 10
 end
 
 mesh_garment = mesh_part;
+pose = theta;
 
 end
 
