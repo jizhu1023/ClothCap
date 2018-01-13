@@ -4,6 +4,7 @@ global is_first;
 global smpl_model;
 global mesh_prefix;
 global result_dir;
+global n_smpl;
 
 % solve multi-cloth-template in 1st frame
 if is_first == 1
@@ -36,13 +37,16 @@ if is_first == 1
 %         mesh_scan, mesh_smpl, label_smpl, smpl_param, 'skin');
     
     % for shirt    
-    align_garment(garments_scan.shirt, garments_smpl.shirt, ...
+    [mesh_shirt_full, mesh_shirt] = align_garment(garments_scan.shirt, garments_smpl.shirt, ...
         mesh_scan, mesh_smpl, label_smpl, smpl_param, 'shirt');
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_shirt_full.obj'], mesh_shirt_full, true);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_shirt.obj'], mesh_shirt, true);
     
     % for pants    
-    align_garment(garments_scan.pants, garments_smpl.pants, ...
+    [mesh_pants_full, mesh_pants] = align_garment(garments_scan.pants, garments_smpl.pants, ...
         mesh_scan, mesh_smpl, label_smpl, smpl_param, 'pants');
-    
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_pants_full.obj'], mesh_pants_full, true);
+    mesh_exporter([result_dir, filesep, mesh_prefix, '_pants.obj'], mesh_pants, true);
 else
      
     
