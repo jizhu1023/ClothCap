@@ -15,7 +15,11 @@ global is_first;
 global mesh_prefix;
 global result_dir;
 
+mesh_folder = 'ly-apose_texture_subdivided';
 mesh_format = 'ly-apose_texture_%08d_gop.obj';
+
+result_dir_base = ['all_results', filesep, 'segmentation', filesep, mesh_folder];
+mkdir(result_dir_base);
 
 % get smpl prior
 prior_smpl = get_smpl_prior();
@@ -32,14 +36,15 @@ for frame = frame_start : frame_end
     mesh_prefix = mesh_prefix(1:end-4);
     disp(['segmentation: ', mesh_prefix]);
     
-    result_dir = ['all_results', filesep, 'segmentation', filesep, mesh_prefix];
+    result_dir = [result_dir_base, filesep, mesh_prefix];
     mkdir(result_dir);
     
     mesh_scan_name = [mesh_prefix, '.obj'];
-    mesh_scan_folder = ['scans', filesep, 'ly-apose_texture_subdivided'];
+    mesh_scan_folder = ['scans', filesep, mesh_folder];
     
     mesh_smpl_name = [sprintf(mesh_prefix, frame), '_aligned_SMPL.obj'];
-    mesh_smpl_folder = ['all_results', filesep, 'single_mesh', filesep, mesh_prefix];
+    mesh_smpl_folder = ['all_results', filesep, 'single_mesh', ...
+        filesep, mesh_folder, filesep, mesh_prefix];
     
     % load scan mesh
     mesh_scan = mesh_parser(mesh_scan_name, mesh_scan_folder);
@@ -76,4 +81,9 @@ for frame = frame_start : frame_end
     [garments_scan, mesh_garments_scan] = extract_garments(mesh_scan, seg_scan);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_garments_scan.obj'], mesh_garments_scan, true);
     save([result_dir, filesep, mesh_prefix, '_garments_scan.mat'], 'garments_scan');
+    
+    if is_first == 1
+        save([result_dir_base, filesep, 'individual_1st_label_scan.mat'], 'seg_scan');
+        save([result_dir_base, filesep, 'individual_1st_label_smpl.mat'], 'seg_smpl');
+    end
 end

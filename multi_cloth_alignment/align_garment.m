@@ -1,6 +1,7 @@
-function [mesh_full, mesh_garment, pose] = align_garment(garment_scan, garment_smpl, mesh_scan, mesh_smpl, ...
-    label_smpl, smpl_param, garment_prefix)
+function [garment_vertices, pose] = align_garment(garment_scan, garment_smpl, ...
+    mesh_scan, mesh_smpl, label_smpl, garment_prefix)
 
+global smpl_param;
 global mesh_prefix;
 global result_dir;
 
@@ -39,7 +40,10 @@ for iter = 1 : 10
     mesh_exporter([tmp_result_folder, filesep, mesh_name_part], mesh_part, true);
 end
 
-mesh_garment = mesh_part;
+mesh_exporter([result_dir, filesep, mesh_prefix, '_shirt_full.obj'], mesh_shirt_full, true);
+mesh_exporter([result_dir, filesep, mesh_prefix, '_shirt.obj'], mesh_shirt, true);
+
+garment_vertices = L;
 pose = theta;
 
 end
