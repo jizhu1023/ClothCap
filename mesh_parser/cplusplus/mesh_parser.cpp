@@ -31,6 +31,7 @@ void MeshParser::load(const std::string& mesh_name)
 
     max_vert_face_num = 0;
     max_vert_edge_num = 0;
+
     // parse obj file
     for (auto v_it = mesh_.vertices_begin(); v_it != mesh_.vertices_end(); ++v_it)
     {
@@ -73,16 +74,16 @@ void MeshParser::load(const std::string& mesh_name)
 
     for (auto f_it = mesh_.faces_begin(); f_it != mesh_.faces_end(); ++f_it)
     {
-        std::vector<int> vertices_index;
+        std::vector<int> vertices_ind;
         for (auto fv_it = mesh_.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
-            vertices_index.emplace_back(fv_it->idx());
-        assert(vertices_index.size() == 3);
-        faces.emplace_back(vertices_index[0], vertices_index[1], vertices_index[2]);
+            vertices_ind.emplace_back(fv_it->idx());
+        assert(vertices_ind.size() == 3);
+        faces.emplace_back(vertices_ind[0], vertices_ind[1], vertices_ind[2]);
 
-        std::vector<int> edges_index;
+        std::vector<int> edges_ind;
         for (auto fe_it = mesh_.fe_iter(*f_it); fe_it.is_valid(); ++fe_it)
-            edges_index.emplace_back(fe_it->idx());
-        face_edges.insert(std::make_pair(f_it->idx(), edges_index));
+            edges_ind.emplace_back(fe_it->idx());
+        face_edges.insert(std::make_pair(f_it->idx(), edges_ind));
     }
 
     for (auto e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it)
