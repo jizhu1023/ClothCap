@@ -153,13 +153,13 @@ v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
 m_smpl.vertices = v_posed;
 m_smpl.faces = smpl_model.f + 1;
 mesh_smpl_file = [result_dir, filesep, mesh_prefix, '_aligned_SMPL.obj'];
-mesh_exporter(m_smpl, mesh_smpl_file);
+mesh_exporter(mesh_smpl_file, m_smpl);
 
 % fitted and aligned A
 m_A.vertices = A_vertices;
 m_A.faces = smpl_model.f + 1;
 mesh_A_file = [result_dir, filesep, mesh_prefix, '_aligned_A.obj'];
-mesh_exporter(m_A, mesh_A_file);
+mesh_exporter(mesh_A_file, m_A);
 
 % SMPL parameters
 param_smpl_file = [result_dir, filesep, mesh_prefix, '_aligned_param.mat'];

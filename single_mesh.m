@@ -2,14 +2,16 @@ clear all;
 close all;
 clc;
 
+addpath('common');
 addpath('smpl_model');
 addpath('mesh_parser');
+addpath('single_mesh_alignment')
 
-mesh_folder = ['scans', filesep, 'celina-s2-t9-b4_texture'];
-mesh_name = 'celina-s2-t9-b4_texture_%08d_gop.obj';
+mesh_folder = ['scans', filesep, 'ly-apose_texture_subdivided'];
+mesh_name = 'ly-apose_texture_%08d_gop.obj';
 
-frame_start = 1812;
-frame_end = 1832;
+frame_start = 1;
+frame_end = 1;
 
 % global varibles used in single mesh alignment
 global is_first;
@@ -18,10 +20,10 @@ global mesh_prefix;
 global mesh_prefix_last;
 global result_dir;
 
-smpl_model = load('smpl_f.mat');
+smpl_model = load('smpl_m.mat');
 smpl_model = smpl_model.model;
 
-for frame = frame_start : frame_start
+for frame = frame_start : frame_end
     % for first frame
     if frame == frame_start
         is_first = 1;
@@ -33,7 +35,7 @@ for frame = frame_start : frame_start
     
     mesh_name = sprintf(mesh_name, frame);
     mesh_prefix = mesh_name(1:end-4);
-    disp(['Processing mesh ', mesh_prefix, ' ...']);
+    disp(['single-mesh alignment: ', mesh_prefix]);
     
     mesh = mesh_parser(mesh_name, mesh_folder);
     

@@ -1,7 +1,7 @@
 function [label] = prior_pants(mesh)
 
 %% likely to be pants
-mask_likely = mesh.vertices(:, 2) > -0.947551 & mesh.vertices(:, 2) < -0.248313;
+mask_likely = mesh.vertices(:, 2) > -0.947551 & mesh.vertices(:, 2) < -0.334934;
 
 %% unlikely to be pants
 mask_unlikely_0 = mesh.vertices(:, 2) > -0.091166;
