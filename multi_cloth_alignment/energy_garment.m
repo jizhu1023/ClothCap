@@ -9,7 +9,7 @@ theta = reshape(x(1:24, :), 72, 1)';
 sigma = 0.1;
 energy = 0;
 
-w_g = 1000;
+w_g = 100;
 w_b = 20;
 w_c = 1.5;
 w_s = 200;
