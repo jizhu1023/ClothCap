@@ -27,7 +27,11 @@ mesh_smpl.colors = render_labels(label_smpl);
 
 % get the smpl model garments
 [garments_smpl, mesh_garments_smpl] = extract_garments(mesh_smpl, label_smpl);
+% manually add ring indices for smpl garments
+% garments_smpl = manually_ring(garments_smpl);
+
 mesh_exporter([result_dir_base, '/smpl_garments.obj'], mesh_garments_smpl, true);
 save([result_dir_base, '/smpl_garments.mat'], 'garments_smpl');
+
 
 end
