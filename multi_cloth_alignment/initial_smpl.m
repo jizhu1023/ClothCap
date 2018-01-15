@@ -23,6 +23,7 @@ v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
 mesh_smpl = mesh_parser('smpl_base_m.obj', 'smpl_model');
 mesh_smpl.vertices = v_posed;
 mesh_smpl.normals = calNormal(mesh_smpl.faces, mesh_smpl.vertices);
+mesh_smpl.colors = render_labels(label_smpl);
 
 % get the smpl model garments
 [garments_smpl, mesh_garments_smpl] = extract_garments(mesh_smpl, label_smpl);

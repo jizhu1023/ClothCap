@@ -53,7 +53,8 @@ for frame = frame_start : frame_end
     mesh_scan_folder = ['scans', filesep, mesh_folder];
     mesh_scan = mesh_parser(mesh_scan_name, mesh_scan_folder);
     mesh_scan.vertices = mesh_scan.vertices ./ 1000;
-
+    mesh_scan.colors = render_labels(label_scan);
+    
     % load scan garments
     garments_scan = load([last_folder, filesep, mesh_prefix, '_garments_scan.mat']);
     garments_scan = garments_scan.garments_scan;

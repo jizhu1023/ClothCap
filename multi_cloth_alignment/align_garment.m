@@ -40,8 +40,8 @@ for iter = 1 : 10
     mesh_exporter([tmp_result_folder, filesep, mesh_name_part], mesh_part, true);
 end
 
-mesh_exporter([result_dir, filesep, mesh_prefix, '_shirt_full.obj'], mesh_shirt_full, true);
-mesh_exporter([result_dir, filesep, mesh_prefix, '_shirt.obj'], mesh_shirt, true);
+mesh_exporter([result_dir, filesep, mesh_prefix, '_', garment_prefix, '_full.obj'], mesh_full, true);
+mesh_exporter([result_dir, filesep, mesh_prefix, '_', garment_prefix, '.obj'], mesh_part, true);
 
 garment_vertices = L;
 pose = theta;
