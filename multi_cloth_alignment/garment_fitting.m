@@ -11,7 +11,7 @@ if is_first == 1
     
     % for skin    
     [vertices_skin, pose_skin] = align_skin(garments_scan.skin, garments_smpl.skin, ...
-        mesh_scan, mesh_smpl, label_smpl, smpl_param);
+        mesh_scan, mesh_smpl, label_smpl);
     save([result_dir, filesep, mesh_prefix, '_pose_skin.mat'], 'pose_skin');
     
     % for shirt    
