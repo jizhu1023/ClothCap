@@ -1,4 +1,4 @@
-function [garment_vertices, pose] = align_garment(garment_scan, garment_smpl, ...
+function [vertices, pose] = align_garment(garment_scan, garment_smpl, ...
     mesh_scan, mesh_smpl, label_smpl, garment_prefix)
 
 global smpl_param;
@@ -9,7 +9,7 @@ tmp_result_folder = [result_dir, filesep, mesh_prefix, '_garments_', garment_pre
 mkdir(tmp_result_folder);
 
 L = mesh_smpl.vertices(garment_smpl.vertices_ind, :);
-theta = smpl_param(11:82);
+theta = reshape(smpl_param(11:82), 24, 3);
 
 mesh_smpl_tmp = mesh_smpl;
 
@@ -17,7 +17,7 @@ for iter = 1 : 10
     mesh_smpl_tmp.vertices(garment_smpl.vertices_ind, :) = L;
     mesh_smpl_tmp.normals = calNormal(mesh_smpl_tmp.faces, mesh_smpl_tmp.vertices);
     
-    param = [reshape(theta, 24, 3); L];
+    param = [theta; L];
     
     options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
         'Display', 'iter-detailed', 'MaxIter', 10);
@@ -43,8 +43,8 @@ end
 mesh_exporter([result_dir, filesep, mesh_prefix, '_', garment_prefix, '_full.obj'], mesh_full, true);
 mesh_exporter([result_dir, filesep, mesh_prefix, '_', garment_prefix, '.obj'], mesh_part, true);
 
-garment_vertices = L;
-pose = theta;
+vertices = L;
+pose = reshape(theta, 1, 72);
 
 end
 
