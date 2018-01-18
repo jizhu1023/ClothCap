@@ -17,7 +17,7 @@ energy = 0;
 
 w_g = 10;
 w_b = 10;
-w_c = 1.5;
+w_c = 3;
 w_s = 1000;
 w_a = 20;
 
@@ -84,16 +84,16 @@ error_coupling = norm(L - v_posed_garment, 'fro');
 energy = energy + w_c * error_coupling;
 
 % 4th laplacian term:
-Z = mesh_smpl.adjacency_map( ...
-    garment_smpl.vertices_ind, garment_smpl.vertices_ind);
-vertices_degree = sum(Z, 2);
-H = diag(vertices_degree);
-I = eye(length(vertices_degree));
-G = I - H \ Z;
-product = G * L;
-
-error_laplacian = norm(product, 'fro');
-energy = energy + w_s * error_laplacian;
+% Z = mesh_smpl.adjacency_map( ...
+%     garment_smpl.vertices_ind, garment_smpl.vertices_ind);
+% vertices_degree = sum(Z, 2);
+% H = diag(vertices_degree);
+% I = eye(length(vertices_degree));
+% G = I - H \ Z;
+% product = G * L;
+% 
+% error_laplacian = norm(product, 'fro');
+% energy = energy + w_s * error_laplacian;
 
 % 5th boundary smoothness term
     
