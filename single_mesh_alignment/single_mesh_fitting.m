@@ -8,20 +8,20 @@ global result_dir;
 % vertices in SMPL model
 n_smpl = size(smpl_model.v_template, 1);
 
-max_iter = 50;
+max_iter = 1;
 if_shape = 1;
 
 % not first frame
 if is_first == 0
-    max_iter = 10;
+    max_iter = 1;
 	if_shape = 0;
 end
 
 param_tmp = param_init;
 param_tmp(end) = 1;
 
-param_fitted = estimate_fitting(smpl_model, mesh.vertices, mesh.normals, max_iter, ...
-    if_shape, param_tmp, mesh_prefix, result_dir);
+param_fitted = estimate_fitting(smpl_model, mesh.vertices, mesh.normals, ...
+    max_iter, if_shape, param_tmp, mesh_prefix, result_dir);
 
 [betas, pose, trans, scale] = divideParam(param_fitted);
 [v_shaped, j_shaped] = calShapedMesh(smpl_model, betas);

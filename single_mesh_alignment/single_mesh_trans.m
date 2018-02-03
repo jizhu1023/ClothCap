@@ -4,6 +4,7 @@ global smpl_model;
 global mesh_prefix;
 global mesh_prefix_last;
 global result_dir;
+global result_dir_base;
 
 max_iter = 1;
 
@@ -28,9 +29,10 @@ if isempty(mesh_prefix_last)
     scale = 1;
     param = combineParam(betas, pose, trans, scale);
 else
-    param_last = mesh_prefix_last;
-    param = load(param_last);
-    param = param.para;    
+    param_path = [result_dir_base, filesep, mesh_prefix_last];
+    param_name = [mesh_prefix_last, '_fit_param.mat'];
+    param = load([param_path, filesep, param_name]);
+    param = param.param;    
 end
 
 [betas, pose, trans, scale] = divideParam(param);

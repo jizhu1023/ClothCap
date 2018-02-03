@@ -10,18 +10,18 @@ addpath('single_mesh_alignment')
 mesh_folder = 'body_easy';
 mesh_format = '20171227-body-easy_texture_%08d_gop.obj';
 
-result_dir_base = ['all_results', filesep, 'single_mesh', filesep, mesh_folder];
-mkdir(result_dir_base);
-
 frame_start = 1;
-frame_end = 1;
+frame_end = 5;
 
-% global varibles used in single mesh alignment
 global is_first;
 global smpl_model;
 global mesh_prefix;
 global mesh_prefix_last;
 global result_dir;
+global result_dir_base;	
+
+result_dir_base = ['all_results', filesep, 'single_mesh', filesep, mesh_folder];
+mkdir(result_dir_base);
 
 smpl_model = load('smpl_m.mat');
 smpl_model = smpl_model.model;
@@ -33,7 +33,8 @@ for frame = frame_start : frame_end
         mesh_prefix_last = '';
     else
         is_first = 0;
-        mesh_prefix_last = sprintf(mesh_name, frame - 1);
+        mesh_prefix_last = sprintf(mesh_format, frame - 1);
+        mesh_prefix_last = mesh_prefix_last(1:end-4);
     end
     
     mesh_prefix = sprintf(mesh_format, frame);
@@ -59,8 +60,8 @@ for frame = frame_start : frame_end
     % s3_fit_scan
     [param_fitted_smpl, mesh_fitted_smpl] = single_mesh_fitting(mesh_scaled_scan, param_init);
 
-    % s4_opt_single_mesh_3s_GMdist
-    [m_smpl, m_A, param] = single_mesh_align(mesh_scaled_scan, mesh_fitted_smpl, param_fitted_smpl);
+%     % s4_opt_single_mesh_3s_GMdist
+%     [m_smpl, m_A, param] = single_mesh_align(mesh_scaled_scan, mesh_fitted_smpl, param_fitted_smpl);
  
 end
 
