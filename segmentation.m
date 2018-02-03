@@ -5,18 +5,19 @@ clc;
 addpath('common');
 addpath('smpl_model');
 addpath('mesh_parser');
+addpath('sdf_extractor');
 addpath('segmentation');
 
 frame_start = 1;
-frame_end = 1;
+frame_end = 3;
 
 % global varibles used in single mesh alignment
 global is_first;
 global mesh_prefix;
 global result_dir;
 
-mesh_folder = 'ly-apose_texture_subdivided';
-mesh_format = 'ly-apose_texture_%08d_gop.obj';
+mesh_folder = 'body_easy';
+mesh_format = '20171227-body-easy_texture_%08d_gop.obj';
 
 result_dir_base = ['all_results', filesep, 'segmentation', filesep, mesh_folder];
 mkdir(result_dir_base);
@@ -42,9 +43,9 @@ for frame = frame_start : frame_end
     mesh_scan_name = [mesh_prefix, '.obj'];
     mesh_scan_folder = ['scans', filesep, mesh_folder];
     
-    mesh_smpl_name = [sprintf(mesh_prefix, frame), '_aligned_SMPL.obj'];
+    mesh_smpl_name = 'mesh_smpl_4.obj';
     mesh_smpl_folder = ['all_results', filesep, 'single_mesh', ...
-        filesep, mesh_folder, filesep, mesh_prefix];
+        filesep, mesh_folder, filesep, num2str(frame)];
     
     % load scan mesh
     mesh_scan = mesh_parser(mesh_scan_name, mesh_scan_folder);

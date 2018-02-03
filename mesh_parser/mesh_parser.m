@@ -1,6 +1,7 @@
 function [mesh] = mesh_parser(mesh_name, mesh_folder)
 
 cd('mesh_parser');
+
 delete('*.mesh');
 
 mesh_filename = ['..', filesep, mesh_folder, filesep, mesh_name];

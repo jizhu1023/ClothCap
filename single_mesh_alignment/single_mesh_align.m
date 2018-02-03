@@ -68,7 +68,6 @@ for loop = 1 : max_iter
     param1 = [beta, pose, trans, scale];
     options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
         'Display', 'iter-detailed', 'MaxIter', 10);
-    options = optimoptions(options, 'UseParallel', true);
     param_opt1 = lsqnonlin(@(x) SingleMeshEnergy1(x, smpl_model, A_vertices, nearest_pts_s2a, ...
         nearest_ind_s2a, n_smpl), param1, [], [], options);
     
@@ -94,7 +93,6 @@ for loop = 1 : max_iter
     %   'Display', 'iter-detailed', 'MaxIter', 10, 'MaxFunEvals', 40000);
     options = optimoptions(@fminunc, 'Algorithm', 'quasi-newton', ...
         'Display', 'iter-detailed', 'MaxIter', 10, 'MaxFunEvals', 1000000);
-    options = optimoptions(options, 'UseParallel', true);
     param_opt2 = fminunc(@(x) SingleMeshEnergy2(x, smpl_model, v_posed, nearest_pts_s2a, ...
         nearest_ind_s2a), param2, options);
     
@@ -129,7 +127,6 @@ for loop = 1 : max_iter
     
     options = optimoptions('fmincon', 'GradObj', 'off', 'Display', 'iter-detailed', ...
         'MaxIter', 10, 'MaxFunEvals', 300000);
-    options = optimoptions(options, 'UseParallel', true);
     param_opt = fmincon(@(x) SingleMeshEnergy_GMdist(x, smpl_model, A_vertices, nearest_pts_s2a, ...
         nearest_ind_s2a, nearest_pts_a2s, mask_a2s), param, [], [], A_eq, b_eq, [], [], [], options);
 

@@ -7,34 +7,27 @@ global result_dir;
 n_scan = size(mesh_scan.vertices, 1);
 n_smpl = size(mesh_smpl.vertices, 1);
 
-% get scan adjacancy map
-n_edges = size(mesh_scan.edges, 1);
-adj_map_scan = zeros(n_scan, n_scan);
-for i = 1 : n_edges
-    edge = mesh_scan.edges(i, :);
-    adj_map_scan(edge(1), edge(2)) = 1;
-    adj_map_scan(edge(2), edge(1)) = 1;
-end
-
 % unary: data likelihood
 % for both SMPL and scan model
 unary_scan_data = zeros(n_scan, 3);
 unary_smpl_data = zeros(n_smpl, 3);
 
 if is_first
+    center_ind = [21888, 16836, 15667];
+    
     % color feature
-    color_start = [[164, 140, 122]; [217, 220, 219]; [69, 71, 70]];
+    color_start = mesh_scan.colors(center_ind, :);
     color_start = rgb2hsv(double(color_start) / 255);
     color_hsv = rgb2hsv(double(mesh_scan.colors) / 255);
     
     % sdf feature
-    sdf_values = importdata('sdf_value.txt');
+    sdf_values = importdata('sdf_extractor/sdf_value.txt');
     sdf_values = sdf_values(:, 2);
-    sdf_start = [0.2066; 0.8474; 0.4405];
+    sdf_start = sdf_values(center_ind);
     
     % total feature;
-    total_feature = [color_hsv, sdf_values];
-    total_start = [color_start, sdf_start];
+    total_feature = [color_hsv];
+    total_start = [color_start];
     
     % k-means on scan
     labels_k_means = kmeans(total_feature, 3, 'Start', total_start);
@@ -46,7 +39,7 @@ if is_first
     % for scan
     % find neighbors directly from adjacent map
     for i = 1 : n_scan
-        adjacency = adj_map_scan(i, :);
+        adjacency = mesh_scan.adjacency_map(i, :);
         [~, neighbor_ind] = find(adjacency == 1);
         neighbor_label = labels_k_means(neighbor_ind);
         
@@ -59,7 +52,7 @@ if is_first
     % node i -> scan point v -> v's neighbors
     ind_scan = matching_pair(mesh_scan, mesh_smpl, 2);
     for i = 1 : size(ind_scan, 1)
-        neighbors = adj_map_scan(ind_scan(i), :);
+        neighbors = mesh_scan.adjacency_map(ind_scan(i), :);
         [~, neighbors_ind] = find(neighbors == 1);
         neighbor_label = labels_k_means(neighbors_ind);
         

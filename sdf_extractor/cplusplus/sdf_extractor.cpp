@@ -19,16 +19,25 @@ typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 
 int main(int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cerr << "[error] wrong number of arguments, aborting ..." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    std::string mesh_filename = std::string(argv[1]);
+    std::cout << "[info] extracting sdf feature: " << mesh_filename << std::endl;
+
     Mesh mesh;
-    OpenMesh::IO::read_mesh(mesh, "ly-apose_texture_00000001_gop.obj");
+    OpenMesh::IO::read_mesh(mesh, mesh_filename);
     if (!CGAL::is_triangle_mesh(mesh))
     {
-        std::cerr << "Input geometry is not triangulated." << std::endl;
+        std::cerr << "[error] input geometry is not triangulated." << std::endl;
         return EXIT_FAILURE;
     }
-    std::cout << "#F : " << num_faces(mesh) << std::endl;
-    std::cout << "#H : " << num_halfedges(mesh) << std::endl;
-    std::cout << "#V : " << num_vertices(mesh) << std::endl;
+    std::cout << "[info] #F: " << num_faces(mesh) << std::endl;
+    std::cout << "[info] #H: " << num_halfedges(mesh) << std::endl;
+    std::cout << "[info] #V: " << num_vertices(mesh) << std::endl;
 
     // create a property-map for SDF values
     typedef std::map<face_descriptor, double> Facet_double_map;
@@ -47,8 +56,8 @@ int main(int argc, char** argv)
     // CGAL::sdf_values_postprocessing(mesh, sdf_property_map);
   
     // print minimum & maximum SDF values
-    std::cout << "minimum SDF: " << min_max_sdf.first << std::endl
-              << "maximum SDF: " << min_max_sdf.second << std::endl;
+    std::cout << "[info] minimum SDF: " << min_max_sdf.first << std::endl
+              << "[info] maximum SDF: " << min_max_sdf.second << std::endl;
     
     // calculate vertices sdf from faces sdf
     std::vector<std::pair<int, double>> sdf_values;

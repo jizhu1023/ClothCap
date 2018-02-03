@@ -7,8 +7,11 @@ addpath('smpl_model');
 addpath('mesh_parser');
 addpath('single_mesh_alignment')
 
-mesh_folder = ['scans', filesep, 'ly-apose_texture_subdivided'];
-mesh_name = 'ly-apose_texture_%08d_gop.obj';
+mesh_folder = 'body_easy';
+mesh_format = '20171227-body-easy_texture_%08d_gop.obj';
+
+result_dir_base = ['all_results', filesep, 'single_mesh', filesep, mesh_folder];
+mkdir(result_dir_base);
 
 frame_start = 1;
 frame_end = 1;
@@ -33,14 +36,17 @@ for frame = frame_start : frame_end
         mesh_prefix_last = sprintf(mesh_name, frame - 1);
     end
     
-    mesh_name = sprintf(mesh_name, frame);
-    mesh_prefix = mesh_name(1:end-4);
-    disp(['single-mesh alignment: ', mesh_prefix]);
+    mesh_prefix = sprintf(mesh_format, frame);
+    mesh_prefix = mesh_prefix(1:end-4);
+    disp(['single_mesh: ', mesh_prefix]);
     
-    mesh = mesh_parser(mesh_name, mesh_folder);
-    
-    result_dir = ['all_results/single_mesh', filesep, mesh_prefix];
+    result_dir = [result_dir_base, filesep, mesh_prefix];
     mkdir(result_dir);
+    
+    mesh_scan_name = [mesh_prefix, '.obj'];
+    mesh_scan_folder = ['scans', filesep, mesh_folder];
+    
+    mesh = mesh_parser(mesh_scan_name, mesh_scan_folder);
     
     % single mesh alignment
     
