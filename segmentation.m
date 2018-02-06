@@ -12,7 +12,7 @@ addpath('3rdparty/gco-v3.0');
 addpath('3rdparty/gco-v3.0/matlab');
 
 frame_start = 1;
-frame_end = 525;
+frame_end = 200;
 
 % global varibles used in single mesh alignment
 global is_first;
@@ -32,7 +32,7 @@ prior_smpl = get_smpl_prior();
 
 for frame = frame_start : frame_end
     % for first frame
-    if frame == frame_start
+    if frame == 1
         is_first = 1;
         mesh_prefix_last = '';
     else
