@@ -12,7 +12,7 @@ addpath('3rdparty/gco-v3.0');
 addpath('3rdparty/gco-v3.0/matlab');
 
 frame_start = 1;
-frame_end = 200;
+frame_end = 525;
 
 % global varibles used in single mesh alignment
 global is_first;
