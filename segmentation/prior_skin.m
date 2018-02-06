@@ -2,10 +2,10 @@ function [label] = prior_skin(mesh)
 
 %% likely to be skin
 mask_likely_0 = mesh.vertices(:, 2) > 0.329678;
-mask_likely_1 = mesh.vertices(:, 2) < -1.17301;
+% mask_likely_1 = mesh.vertices(:, 2) < -1.17301;
 mask_likely_2 = mesh.vertices(:, 1) > 0.442744;
 mask_likely_3 = mesh.vertices(:, 1) < -0.42223;
-mask_likely = mask_likely_0 | mask_likely_1 | mask_likely_2 | mask_likely_3;
+mask_likely = mask_likely_0 | mask_likely_2 | mask_likely_3;
 
 %% unlikely to be skin
 mask_unlikely_0 = mesh.vertices(:, 2) < 0.134339 & mesh.vertices(:, 2) > -0.166764;
