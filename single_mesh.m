@@ -11,7 +11,7 @@ mesh_folder = 'body_easy';
 mesh_format = '20171227-body-easy_texture_%08d_gop.obj';
 
 frame_start = 1;
-frame_end = 5;
+frame_end = 525;
 
 global is_first;
 global smpl_model;

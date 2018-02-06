@@ -2,7 +2,9 @@ function [unary_scan, unary_smpl] = calculate_unary(mesh_scan, mesh_smpl, prior_
 
 global is_first;
 global mesh_prefix;
+global mesh_prefix_last;
 global result_dir;
+global result_dir_base;	
 
 n_scan = size(mesh_scan.vertices, 1);
 n_smpl = size(mesh_smpl.vertices, 1);
@@ -20,14 +22,9 @@ if is_first
     color_start = rgb2hsv(double(color_start) / 255);
     color_hsv = rgb2hsv(double(mesh_scan.colors) / 255);
     
-    % sdf feature
-    sdf_values = importdata('sdf_extractor/sdf_value.txt');
-    sdf_values = sdf_values(:, 2);
-    sdf_start = sdf_values(center_ind);
-    
     % total feature;
-    total_feature = [color_hsv];
-    total_start = [color_start];
+    total_feature = color_hsv;
+    total_start = color_start;
     
     % k-means on scan
     labels_k_means = kmeans(total_feature, 3, 'Start', total_start);
@@ -40,8 +37,8 @@ if is_first
     % find neighbors directly from adjacent map
     for i = 1 : n_scan
         adjacency = mesh_scan.adjacency_map(i, :);
-        [~, neighbor_ind] = find(adjacency == 1);
-        neighbor_label = labels_k_means(neighbor_ind);
+        [~, neighbors_ind] = find(adjacency == 1);
+        neighbor_label = labels_k_means(neighbors_ind);
         
         unary_scan_data(i, 1) = sum(-log((neighbor_label == 1) + 1e-6));
         unary_scan_data(i, 2) = sum(-log((neighbor_label == 2) + 1e-6));
@@ -50,7 +47,7 @@ if is_first
     
     % for smpl
     % node i -> scan point v -> v's neighbors
-    ind_scan = matching_pair(mesh_scan, mesh_smpl, 2);
+    ind_scan = matching_pair(mesh_scan, mesh_smpl, 1);
     for i = 1 : size(ind_scan, 1)
         neighbors = mesh_scan.adjacency_map(ind_scan(i), :);
         [~, neighbors_ind] = find(neighbors == 1);
@@ -60,16 +57,42 @@ if is_first
         unary_smpl_data(i, 2) = sum(-log((neighbor_label == 2) + 1e-6));
         unary_smpl_data(i, 3) = sum(-log((neighbor_label == 3) + 1e-6));
     end
-    
-    m = mesh_smpl;
-    m.colors = render_unary(unary_smpl_data);
-    mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_smpl_data.obj'], m, true);
-    m = mesh_scan;
-    m.colors = render_unary(unary_scan_data);
-    mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_scan_data.obj'], m, true);
 else
+	gmm_path = [result_dir_base, filesep, mesh_prefix_last];
+    gmm_name = [mesh_prefix_last, '_gmm.mat'];
+    gmm = load([gmm_path, filesep, gmm_name]);
+    gmm = gmm.gmm;
+    
+    % for scan
+    % find neighbors directly from adjacent map
+    for i = 1 : n_scan
+        adjacency = mesh_scan.adjacency_map(i, :);
+        [~, neighbors_ind] = find(adjacency == 1);
+        neighbor_colors = mesh_scan.colors(neighbors_ind, :);
+        
+        probs = gmm_sample(gmm, neighbor_colors);
+        unary_scan_data(i, :) = sum(-log(probs + 1e-6));
+    end
 
+    % for smpl
+    % node i -> scan point v -> v's neighbors
+    ind_scan = matching_pair(mesh_scan, mesh_smpl, 1);
+    for i = 1 : size(ind_scan, 1)
+        neighbors = mesh_scan.adjacency_map(ind_scan(i), :);
+        [~, neighbors_ind] = find(neighbors == 1);
+        neighbor_colors = mesh_scan.colors(neighbors_ind, :);
+        
+        probs = gmm_sample(gmm, neighbor_colors);
+        unary_smpl_data(i, :) = sum(-log(probs + 1e-6));
+    end
 end
+
+m = mesh_smpl;
+m.colors = render_unary(unary_smpl_data);
+mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_smpl_data.obj'], m, true);
+m = mesh_scan;
+m.colors = render_unary(unary_scan_data);
+mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_scan_data.obj'], m, true);
 
 % unary: prior
 % for both SMPL and scan model
