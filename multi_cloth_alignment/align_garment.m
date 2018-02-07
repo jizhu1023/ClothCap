@@ -10,9 +10,10 @@ global result_dir;
 % mkdir(tmp_result_folder);
 
 L = mesh_smpl.vertices(garment_smpl.vertices_ind, :);
-theta = reshape(smpl_param(11:82), 24, 3);
+% theta = reshape(smpl_param(11:82), 24, 3);
 
-param = [theta; L];
+% param = [theta; L];
+param = L;
 
 % optimization
 options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
@@ -21,8 +22,9 @@ param_opt = lsqnonlin(@(x) energy_garment(x, mesh_scan, mesh_smpl, ...
     garment_smpl, garment_scan, smpl_param), param, [], [], options);
 
 % optimization result
-L = param_opt(25:end, :);
-theta = param_opt(1:24, :);
+L = param_opt;
+% L = param_opt(25:end, :);
+% theta = param_opt(1:24, :);
 
 mesh_name_full = [mesh_prefix, '_full_', garment_prefix, '.obj'];
 mesh_name_part = [mesh_prefix, '_part_', garment_prefix, '.obj'];
@@ -37,7 +39,8 @@ mesh_part.faces = mesh_full.faces(garment_smpl.faces_ind, :);
 mesh_exporter([result_dir, filesep, mesh_name_part], mesh_part, true);
 
 vertices = L;
-pose = reshape(theta, 1, 72);
+% pose = reshape(theta, 1, 72);
+pose = 0;
 
 % mesh_smpl_tmp = mesh_smpl;
 % 

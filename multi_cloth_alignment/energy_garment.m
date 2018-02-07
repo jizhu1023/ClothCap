@@ -1,11 +1,12 @@
 function [energy] = energy_garment(x, mesh_scan, mesh_smpl, ...
     garment_smpl, garment_scan, smpl_param)
 
-global smpl_model;
-global n_smpl;
+% global n_smpl;
+% global smpl_model;
 
-L = x(25:end, :);
-theta = reshape(x(1:24, :), 72, 1)';
+L = x;
+% L = x(25:end, :);
+% theta = reshape(x(1:24, :), 72, 1)';
 
 sigma = 0.1;
 energy = 0;
@@ -75,14 +76,14 @@ energy = energy + w_b * (...
     sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2)))); 
 
 % 3rd coupling term
-[beta, ~, trans, scale] = divideParam(smpl_param);
-[v_shaped, j_shaped] = calShapedMesh(smpl_model, beta);
-[v_posed] = calPosedMesh(smpl_model, theta, v_shaped, j_shaped, 0);
-v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
-v_posed_garment = v_posed(garment_smpl.vertices_ind, :);
-
-error_coupling = norm(L - v_posed_garment, 'fro');
-energy = energy + w_c * error_coupling;
+% [beta, ~, trans, scale] = divideParam(smpl_param);
+% [v_shaped, j_shaped] = calShapedMesh(smpl_model, beta);
+% [v_posed] = calPosedMesh(smpl_model, theta, v_shaped, j_shaped, 0);
+% v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
+% v_posed_garment = v_posed(garment_smpl.vertices_ind, :);
+% 
+% error_coupling = norm(L - v_posed_garment, 'fro');
+% energy = energy + w_c * error_coupling;
 
 % 4th laplacian term:
 Z = mesh_smpl.adjacency_map( ...
