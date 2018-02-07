@@ -13,12 +13,12 @@ global result_dir;
 
 % for shirt    
 [vertices_shirt, ~] = align_garment(garments_scan.shirt, garments_smpl.shirt, ...
-    mesh_scan, mesh_smpl, label_smpl, 'shirt');
+    mesh_scan, mesh_smpl, label_smpl, 'shirt', 10);
 % save([result_dir, filesep, mesh_prefix, '_pose_shirt.mat'], 'pose_shirt');
 
 % for pants    
 [vertices_pants, ~] = align_garment(garments_scan.pants, garments_smpl.pants, ...
-    mesh_scan, mesh_smpl, label_smpl, 'pants');
+    mesh_scan, mesh_smpl, label_smpl, 'pants', 20);
 % save([result_dir, filesep, mesh_prefix, '_pose_pants.mat'], 'pose_pants');
     
 % combine all garments to one;

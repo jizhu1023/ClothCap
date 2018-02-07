@@ -1,5 +1,5 @@
 function [vertices, pose] = align_garment(garment_scan, garment_smpl, ...
-    mesh_scan, mesh_smpl, label_smpl, garment_prefix)
+    mesh_scan, mesh_smpl, label_smpl, garment_prefix, iter_num)
 
 global smpl_param;
 global mesh_prefix;
@@ -17,7 +17,7 @@ param = L;
 
 % optimization
 options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
-    'Display', 'iter-detailed', 'MaxIter', 20);
+    'Display', 'iter-detailed', 'MaxIter', iter_num);
 param_opt = lsqnonlin(@(x) energy_garment(x, mesh_scan, mesh_smpl, ...
     garment_smpl, garment_scan, smpl_param), param, [], [], options);
 
