@@ -1,4 +1,5 @@
-function [energy] = energy_garment(x, mesh_scan, mesh_smpl, garment_smpl, garment_scan, smpl_param)
+function [energy] = energy_garment(x, mesh_scan, mesh_smpl, ...
+    garment_smpl, garment_scan, smpl_param)
 
 global smpl_model;
 global n_smpl;
