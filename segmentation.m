@@ -92,12 +92,12 @@ for frame = frame_start : frame_end
     
     % render and save result
     mesh_scan_final = mesh_scan;
-    mesh_scan_final.colors = render_result(seg_scan);
+    mesh_scan_final.colors = render_labels(seg_scan);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_scan.obj'], ...
         mesh_scan_final, true);
     
     mesh_smpl_final = mesh_smpl;
-    mesh_smpl_final.colors = render_result(seg_smpl);
+    mesh_smpl_final.colors = render_labels(seg_smpl);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_seg_smpl.obj'], ...
         mesh_smpl_final, true);
     

@@ -1,4 +1,5 @@
-function [unary_scan, unary_smpl] = calculate_unary(mesh_scan, mesh_smpl, prior_scan, prior_smpl)
+function [unary_scan, unary_smpl] = calculate_unary( ...
+    mesh_scan, mesh_smpl, prior_scan, prior_smpl)
 
 global is_first;
 global mesh_prefix;
@@ -30,7 +31,7 @@ if is_first
     labels_k_means = kmeans(total_feature, 3, 'Start', total_start);
     
     m = mesh_scan;
-    m.colors = render_kmeans(labels_k_means);
+    m.colors = render_labels(labels_k_means - 1);
     mesh_exporter([result_dir, filesep, mesh_prefix, '_kmeans.obj'], m, true);
     
     % for scan
@@ -87,11 +88,14 @@ else
     end
 end
 
+[~, ind_smpl] = min(unary_smpl_data, [], 2);
+[~, ind_scan] = min(unary_scan_data, [], 2);
+
 m = mesh_smpl;
-m.colors = render_unary(unary_smpl_data);
+m.colors = render_labels(ind_smpl - 1);
 mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_smpl_data.obj'], m, true);
 m = mesh_scan;
-m.colors = render_unary(unary_scan_data);
+m.colors = render_labels(ind_scan - 1);
 mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_scan_data.obj'], m, true);
 
 % unary: prior
@@ -138,11 +142,14 @@ unary_smpl_prior(:, 3) = l_pants_smpl;
 unary_scan = unary_scan_data + unary_scan_prior;
 unary_smpl = unary_smpl_data + unary_smpl_prior;
 
+[~, ind_smpl] = min(unary_smpl, [], 2);
+[~, ind_scan] = min(unary_scan, [], 2);
+
 m = mesh_smpl;
-m.colors = render_unary(unary_smpl);
+m.colors = render_labels(ind_smpl - 1);
 mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_smpl_all.obj'], m, true);
 m = mesh_scan;
-m.colors = render_unary(unary_scan);
+m.colors = render_labels(ind_scan - 1);
 mesh_exporter([result_dir, filesep, mesh_prefix, '_unary_scan_all.obj'], m, true);
 
 end
