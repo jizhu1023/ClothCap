@@ -36,8 +36,8 @@ for loop = 1 : max_iter
     nearest_ind_m2d = nearest_ind_m2d(mask_m2d);
     nearest_pts_m2d = nearest_pts_m2d(mask_m2d, :);
     
-    options = optimoptions('fmincon', 'GradObj', 'off', 'Display', 'iter-detailed', 'MaxIter', 10);
-    options = optimoptions(options, 'UseParallel', true);
+    options = optimoptions('fmincon', 'GradObj', 'off', 'Display', ...
+        'iter-detailed', 'MaxIter', 10);
     mask = [1:10, 86];
     % mask = [1:85];
     I_matrix = eye(86);
@@ -77,8 +77,8 @@ for loop = 1 : max_iter
         nearest_ind_m2d = nearest_ind_m2d(mask_m2d);
         nearest_pts_m2d = nearest_pts_m2d(mask_m2d, :);
 
-        options = optimoptions('fmincon', 'GradObj', 'off', 'Display', 'iter-detailed', 'MaxIter', 10);
-        options = optimoptions(options, 'UseParallel', true);
+        options = optimoptions('fmincon', 'GradObj', 'off', 'Display', ...
+            'iter-detailed', 'MaxIter', 10);
         mask = [11:82, 86];
         % mask = [1:85];
         I_matrix = eye(86);
