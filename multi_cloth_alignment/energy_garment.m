@@ -20,7 +20,7 @@ energy = 0;
 w_g = 1;
 w_b = 20;
 w_c = 1.5;
-w_s = 2000;
+w_s = 500;
 w_a = 20;
 
 % 1st data term
