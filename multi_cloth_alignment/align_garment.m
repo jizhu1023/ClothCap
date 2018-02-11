@@ -16,10 +16,10 @@ L = mesh_smpl.vertices(garment_smpl.vertices_ind, :);
 param = L;
 
 % optimization
-options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
+options = optimoptions(@fminunc, 'Algorithm', 'quasi-newton', ...
     'Display', 'iter-detailed', 'MaxIter', iter_num);
-param_opt = lsqnonlin(@(x) energy_garment(x, mesh_scan, mesh_smpl, ...
-    garment_smpl, garment_scan, smpl_param), param, [], [], options);
+param_opt = fminunc(@(x) energy_garment(x, mesh_scan, mesh_smpl, ...
+    garment_smpl, garment_scan, smpl_param), param, options);
 
 % optimization result
 L = param_opt;
