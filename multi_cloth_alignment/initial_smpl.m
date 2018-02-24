@@ -1,4 +1,4 @@
-function [label_smpl, garments_smpl] = initial_smpl(mesh_folder)
+function [label_smpl, garments_smpl, mesh_smpl] = initial_smpl(mesh_folder)
 
 global n_smpl;
 global result_dir_base;	

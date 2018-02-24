@@ -1,14 +1,13 @@
-function [energy] = energy_garment(x, mesh_scan, mesh_smpl, ...
-    garment_smpl, garment_scan, smpl_param)
+function [energy] = energy_garment(x, mesh_scan, mesh_smpl, garment_smpl, garment_scan)
 
-% global n_smpl;
-% global smpl_model;
+global n_smpl;
+global smpl_model;
+global smpl_param;
 
-L = x;
-% L = x(25:end, :);
-% theta = reshape(x(1:24, :), 72, 1)';
+L = x(25:end, :);
+theta = reshape(x(1:24, :), 72, 1)';
 
-sigma = 0.1;
+sigma = 0.2;
 energy = 0;
 
 % w_g = 1000;
@@ -20,7 +19,7 @@ energy = 0;
 w_g = 1;
 w_b = 20;
 w_c = 1.5;
-w_s = 500;
+w_s = 1000;
 w_a = 20;
 
 % 1st data term
@@ -47,10 +46,6 @@ energy = energy + w_g * (...
     sum(sum(error_d2m.^2 ./ (error_d2m.^2 + sigma^2))) + ...
     sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2))));
 
-% nearest_ind = knnsearch(L, vertices_scan);
-% error_data = vertices_scan - L(nearest_ind, :);
-% energy = energy + w_g * sum(sum(error_data.^2 ./ (error_data.^2 + sigma^2)));
-
 % 2nd boundary term 
 vertices_smpl_boundary = L(garment_smpl.boundary_local_ind, :);
 vertices_scan_boundary = vertices_scan(garment_scan.boundary_local_ind, :);
@@ -76,14 +71,14 @@ energy = energy + w_b * (...
     sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2)))); 
 
 % 3rd coupling term
-% [beta, ~, trans, scale] = divideParam(smpl_param);
-% [v_shaped, j_shaped] = calShapedMesh(smpl_model, beta);
-% [v_posed] = calPosedMesh(smpl_model, theta, v_shaped, j_shaped, 0);
-% v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
-% v_posed_garment = v_posed(garment_smpl.vertices_ind, :);
-% 
-% error_coupling = norm(L - v_posed_garment, 'fro');
-% energy = energy + w_c * error_coupling;
+[beta, ~, trans, scale] = divideParam(smpl_param);
+[v_shaped, j_shaped] = calShapedMesh(smpl_model, beta);
+[v_posed] = calPosedMesh(smpl_model, theta, v_shaped, j_shaped, 0);
+v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
+v_posed_garment = v_posed(garment_smpl.vertices_ind, :);
+
+error_coupling = norm(L - v_posed_garment, 'fro');
+energy = energy + w_c * error_coupling;
 
 % 4th laplacian term:
 Z = mesh_smpl.adjacency_map( ...
