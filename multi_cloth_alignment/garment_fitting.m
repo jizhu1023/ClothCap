@@ -27,7 +27,8 @@ if is_first == 1
     pose_shirt = smpl_param(11:82);
     pose_pants = smpl_param(11:82);
 
-    [v_posed] = calPosedMesh(smpl_model, smpl_param(11:82), v_shaped, j_shaped, 0);
+    v_posed = calPosedMesh(smpl_model, smpl_param(11:82), ...
+        v_shaped, j_shaped, 0);
     v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
     
     mesh_smpl_shirt.vertices = v_posed;
@@ -42,10 +43,12 @@ else
     pose_shirt = pose_shirt.theta_shirt;
     pose_pants = pose_pants.theta_pants;
     
-    [v_posed_shirt] = calPosedMesh(smpl_model, pose_shirt, v_shaped, j_shaped, 0);
+    v_posed_shirt = calPosedMesh(smpl_model, pose_shirt, ...
+        v_shaped, j_shaped, 0);
     v_posed_shirt = repmat(trans, n_smpl, 1) + v_posed_shirt * scale;
     
-    [v_posed_pants] = calPosedMesh(smpl_model, pose_pants, v_shaped, j_shaped, 0);
+    v_posed_pants = calPosedMesh(smpl_model, pose_pants, ...
+        v_shaped, j_shaped, 0);
     v_posed_pants = repmat(trans, n_smpl, 1) + v_posed_pants * scale;
     
     mesh_smpl_shirt.vertices = v_posed_shirt;
@@ -64,12 +67,12 @@ mesh_exporter([result_dir, filesep, mesh_prefix, ...
 
 % for shirt    
 [vertices_shirt, theta_shirt] = align_garment(garments_scan.shirt, garments_smpl.shirt, ...
-    mesh_scan, mesh_smpl_shirt, label_smpl, pose_shirt, 'shirt', 10);
+    mesh_scan, mesh_smpl_shirt, label_smpl, pose_shirt, 'shirt', 5);
 save([result_dir, filesep, mesh_prefix, '_pose_shirt.mat'], 'theta_shirt');
 
 % for pants    
 [vertices_pants, theta_pants] = align_garment(garments_scan.pants, garments_smpl.pants, ...
-    mesh_scan, mesh_smpl_pants, label_smpl, pose_pants, 'pants', 20);
+    mesh_scan, mesh_smpl_pants, label_smpl, pose_pants, 'pants', 10);
 save([result_dir, filesep, mesh_prefix, '_pose_pants.mat'], 'theta_pants');  
 
 % combine all garments to one;

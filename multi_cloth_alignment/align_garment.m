@@ -16,7 +16,7 @@ L = mesh_smpl.vertices(garment_smpl.vertices_ind, :);
 
 mesh_smpl_tmp = mesh_smpl;
 
-for iter = 1 : iter_num
+for iter = 1 : 1
     
     mesh_smpl_tmp.vertices(garment_smpl.vertices_ind, :) = L;
     mesh_smpl_tmp.normals = calNormal( ...
@@ -25,7 +25,7 @@ for iter = 1 : iter_num
     param = [theta; L];
     
     options = optimoptions(@lsqnonlin, 'Algorithm', 'levenberg-marquardt', ...
-        'Display', 'iter-detailed', 'MaxIter', 1);
+        'Display', 'iter-detailed', 'MaxIter', iter_num);
     param_opt = lsqnonlin(@(x) energy_garment(x, mesh_scan, mesh_smpl_tmp, ...
         garment_smpl, garment_scan), param, [], [], options);
 
