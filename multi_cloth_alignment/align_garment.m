@@ -33,7 +33,7 @@ for iter = 1 : 1
     theta = param_opt(1:24, :);
     
     mesh_name_full = sprintf([garment_prefix, '_full_iter_%02d.obj'], iter);
-    mesh_name_part = sprintf([garment_prefix, '_iter_%02d.obj'], iter);
+    mesh_name_part = sprintf([garment_prefix, '_part_iter_%02d.obj'], iter);
     
     mesh_full = mesh_smpl_tmp;
     mesh_full.vertices(garment_smpl.vertices_ind, :) = L;
@@ -48,7 +48,7 @@ end
 mesh_exporter([result_dir, filesep, mesh_prefix, ...
     '_', garment_prefix, '_full.obj'], mesh_full, true);
 mesh_exporter([result_dir, filesep, mesh_prefix, ...
-    '_', garment_prefix, '.obj'], mesh_part, true);
+    '_', garment_prefix, '_part.obj'], mesh_part, true);
 
 vertices = L;
 pose = reshape(theta, 1, 72);
