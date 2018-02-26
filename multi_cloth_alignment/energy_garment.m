@@ -1,6 +1,7 @@
 function [energy] = energy_garment(x, mesh_scan, mesh_smpl, garment_smpl, garment_scan)
 
 global n_smpl;
+global is_first;
 global smpl_model;
 global smpl_param;
 
@@ -16,11 +17,19 @@ energy = 0;
 % w_s = 200;
 % w_a = 20;
 
-w_g = 1;
-w_b = 20;
-w_c = 1.5;
-w_s = 1000;
-w_a = 20;
+if is_first == 1
+    w_g = 1;
+    w_b = 20;
+    w_c = 1.5;
+    w_s = 1000;
+    w_a = 40;
+else
+    w_g = 1;
+    w_b = 20;
+    w_c = 1.5;
+    w_s = 200;
+    w_a = 40; 
+end
 
 % 1st data term
 vertices_scan = mesh_scan.vertices(garment_scan.vertices_ind, :);
@@ -93,7 +102,17 @@ error_laplacian = norm(product, 'fro');
 energy = energy + w_s * error_laplacian;
 
 % 5th boundary smoothness term
-    
+error_ring = 0;
+rings = garment_smpl.rings;
+for i = 1 : length(rings)
+    ring = rings{i};
+    vertices = mesh_scan.vertices(ring, :);
+    for j = 2 : length(vertices) - 1
+        err = vertices(j - 1, :) + vertices(j + 1, :) - 2 * vertices(j, :);
+        error_ring = error_ring + sum(err.^2);
+    end
+end
+energy = energy + w_a * error_ring;
 
 end
 
