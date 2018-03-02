@@ -30,7 +30,7 @@ def main():
             garment_smpl, smpl_param, smpl_model, is_first)
 
     param_opt = minimize(fun=energy_garments.energy_garments, x0=param,
-                         args=args, method='BFGS', options={'disp': True})
+                         args=args, method='BFGS', options={'disp': True, 'maxiter': 10})
 
     energy = energy_garments.energy_garments(
         param, mesh_scan, mesh_smpl, garment_scan,
