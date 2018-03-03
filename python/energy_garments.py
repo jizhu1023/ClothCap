@@ -5,11 +5,9 @@ from sklearn.neighbors import NearestNeighbors
 
 
 def energy_garments(param, *args):
-        # L, theta, mesh_scan, mesh_smpl, garment_scan,
-        # garment_smpl, smpl_param, smpl_model, is_first):
 
-    theta = np.reshape(param[:72], [-1, 3])
     L = np.reshape(param[72:], [-1, 3])
+    theta = np.reshape(param[:72], [-1, 3])
 
     mesh_scan = args[0]
     mesh_smpl = args[1]
@@ -27,34 +25,32 @@ def energy_garments(param, *args):
         w_b = 10
         w_c = 1.5
         w_s = 1000
-        w_a = 2
+        w_a = 2000
     else:
         w_g = 1
         w_b = 10
         w_c = 1.5
         w_s = 200
-        w_a = 2
+        w_a = 2000
 
     # 1st data term
     normals_scan = mesh_scan.normals[garment_scan.vertices_ind - 1, :]
     normals_smpl = mesh_smpl.normals[garment_smpl.vertices_ind - 1, :]
     vertices_scan = mesh_scan.vertices[garment_scan.vertices_ind - 1, :]
 
-    neighbors = NearestNeighbors(n_neighbors=1, algorithm='kd_tree').fit(L)
-    _, nearest_ind_d2m = neighbors.kneighbors(vertices_scan)
+    _, nearest_ind_d2m = NearestNeighbors(
+        n_neighbors=1, algorithm='kd_tree').fit(L).kneighbors(vertices_scan)
     nearest_ind_d2m = nearest_ind_d2m.flatten()
-    error_n = normals_scan * normals_smpl[nearest_ind_d2m, :]
-    error_n = np.sum(error_n, axis=1)
+    error_n = np.sum(normals_scan * normals_smpl[nearest_ind_d2m, :], axis=1)
     mask_d2m = np.where(error_n > 0.8)
     nearest_pts_d2m = vertices_scan[mask_d2m[0], :]
     nearest_ind_d2m = nearest_ind_d2m[mask_d2m[0]]
 
-    neighbors = NearestNeighbors(n_neighbors=1, algorithm='kd_tree').fit(vertices_scan)
-    _, nearest_ind_m2d = neighbors.kneighbors(L)
+    _, nearest_ind_m2d = NearestNeighbors(
+        n_neighbors=1, algorithm='kd_tree').fit(vertices_scan).kneighbors(L)
     nearest_ind_m2d = nearest_ind_m2d.flatten()
     nearest_pts_m2d = vertices_scan[nearest_ind_m2d, :]
-    error_n = normals_scan[nearest_ind_m2d, :] * normals_smpl
-    error_n = np.sum(error_n, axis=1)
+    error_n = np.sum(normals_scan[nearest_ind_m2d, :] * normals_smpl, axis=1)
     mask_m2d = np.where(error_n > 0.8)
     nearest_pts_m2d = nearest_pts_m2d[mask_m2d[0], :]
 
@@ -71,21 +67,19 @@ def energy_garments(param, *args):
     normals_smpl_boundary = mesh_smpl.normals[garment_smpl.boundary_ind - 1, :]
     normals_scan_boundary = mesh_scan.normals[garment_scan.boundary_ind - 1, :]
 
-    neighbors = NearestNeighbors(n_neighbors=1, algorithm='kd_tree').fit(vertices_smpl_boundary)
-    _, nearest_ind_d2m = neighbors.kneighbors(vertices_scan_boundary)
+    _, nearest_ind_d2m = NearestNeighbors(
+        n_neighbors=1, algorithm='kd_tree').fit(vertices_smpl_boundary).kneighbors(vertices_scan_boundary)
     nearest_ind_d2m = nearest_ind_d2m.flatten()
-    error_n = normals_scan_boundary * normals_smpl_boundary[nearest_ind_d2m, :]
-    error_n = np.sum(error_n, axis=1)
+    error_n = np.sum(normals_scan_boundary * normals_smpl_boundary[nearest_ind_d2m, :], axis=1)
     mask_d2m = np.where(error_n > 0.5)
     nearest_pts_d2m = vertices_scan_boundary[mask_d2m[0], :]
     nearest_ind_d2m = nearest_ind_d2m[mask_d2m[0]]
 
-    neighbors = NearestNeighbors(n_neighbors=1, algorithm='kd_tree').fit(vertices_scan_boundary)
-    _, nearest_ind_m2d = neighbors.kneighbors(vertices_smpl_boundary)
+    _, nearest_ind_m2d = NearestNeighbors(
+        n_neighbors=1, algorithm='kd_tree').fit(vertices_scan_boundary).kneighbors(vertices_smpl_boundary)
     nearest_ind_m2d = nearest_ind_m2d.flatten()
     nearest_pts_m2d = vertices_scan_boundary[nearest_ind_m2d, :]
-    error_n = normals_scan_boundary[nearest_ind_m2d, :] * normals_smpl_boundary
-    error_n = np.sum(error_n, axis=1)
+    error_n = np.sum(normals_scan_boundary[nearest_ind_m2d, :] * normals_smpl_boundary, axis=1)
     mask_m2d = np.where(error_n > 0.5)
     nearest_pts_m2d = nearest_pts_m2d[mask_m2d[0], :]
 
@@ -125,7 +119,7 @@ def energy_garments(param, *args):
     rings = garment_smpl.rings
     for i in range(rings.shape[0]):
         ring = rings[i] - 1
-        vertices = mesh_scan.vertices[ring, :]
+        vertices = mesh_smpl.vertices[ring, :]
         for j in range(1, vertices.shape[0] - 1):
             err = vertices[j - 1, :] + vertices[j + 1, :] - 2 * vertices[j, :]
             error_ring = error_ring + np.dot(err, err)

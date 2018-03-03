@@ -1,9 +1,9 @@
-import energy_garments
 import numpy as np
-import chumpy as ch
 from common import calculation
 from common import importer
+from scipy.io import savemat
 from scipy.optimize import minimize
+from energy_garments import  energy_garments
 
 
 def main():
@@ -26,21 +26,21 @@ def main():
     mesh_smpl_temp.normals = calculation.cal_normals(mesh_smpl_temp.faces, mesh_smpl_temp.vertices)
 
     # optimization
-    param = ch.hstack((ch.reshape(ch.asarray(theta), [1, -1]), np.reshape(ch.asarray(L), [1, -1])))
-    args = (mesh_scan, mesh_smpl, garment_scan,
+    param = np.hstack((np.reshape(theta, [1, -1]), np.reshape(L, [1, -1])))
+    args = (mesh_scan, mesh_smpl_temp, garment_scan,
             garment_smpl, smpl_param, smpl_model, is_first)
 
-    objs = {'garment': energy_garments.energy_garments(param, args)}
-    ch.minimize(fun=objs, x0=[param])
-
-    param_opt = minimize(fun=energy_garments.energy_garments, x0=param,
+    param_opt = minimize(fun=energy_garments, x0=param,
                          args=args, method='BFGS', options={'disp': True, 'maxiter': 10})
 
-    energy = energy_garments.energy_garments(
-        param, mesh_scan, mesh_smpl, garment_scan,
-        garment_smpl, smpl_param, smpl_model, is_first)
+    opt_param = param_opt.x
+    opt_theta = np.reshape(opt_param[0, :72], [-1, 3])
+    opt_L = np.reshape(opt_param[0, 72:], [-1, 3])
 
-    print(energy)
+    savemat(file_name="data/opt_params", mdict={"L": opt_L, "theta": opt_theta})
+
+    # energy = energy_garments(param, args)
+    # print(energy)
 
 
 if __name__ == '__main__':
