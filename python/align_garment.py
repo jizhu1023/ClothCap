@@ -1,5 +1,6 @@
 import energy_garments
 import numpy as np
+import chumpy as ch
 from common import calculation
 from common import importer
 from scipy.optimize import minimize
@@ -25,9 +26,12 @@ def main():
     mesh_smpl_temp.normals = calculation.cal_normals(mesh_smpl_temp.faces, mesh_smpl_temp.vertices)
 
     # optimization
-    param = np.hstack((np.reshape(theta, [1, -1]), np.reshape(L, [1, -1])))
+    param = ch.hstack((ch.reshape(ch.asarray(theta), [1, -1]), np.reshape(ch.asarray(L), [1, -1])))
     args = (mesh_scan, mesh_smpl, garment_scan,
             garment_smpl, smpl_param, smpl_model, is_first)
+
+    objs = {'garment': energy_garments.energy_garments(param, args)}
+    ch.minimize(fun=objs, x0=[param])
 
     param_opt = minimize(fun=energy_garments.energy_garments, x0=param,
                          args=args, method='BFGS', options={'disp': True, 'maxiter': 10})
