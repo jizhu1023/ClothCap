@@ -19,16 +19,16 @@ energy = 0;
 
 if is_first == 1
     w_g = 1;
-    w_b = 20;
+    w_b = 10;
     w_c = 1.5;
     w_s = 1000;
-    w_a = 40;
+    w_a = 2000;
 else
     w_g = 1;
-    w_b = 20;
+    w_b = 10;
     w_c = 1.5;
     w_s = 200;
-    w_a = 40; 
+    w_a = 2000; 
 end
 
 % 1st data term
@@ -106,7 +106,7 @@ error_ring = 0;
 rings = garment_smpl.rings;
 for i = 1 : length(rings)
     ring = rings{i};
-    vertices = mesh_scan.vertices(ring, :);
+    vertices = mesh_smpl.vertices(ring, :);
     for j = 2 : length(vertices) - 1
         err = vertices(j - 1, :) + vertices(j + 1, :) - 2 * vertices(j, :);
         error_ring = error_ring + sum(err.^2);
