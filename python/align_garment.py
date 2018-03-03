@@ -3,7 +3,7 @@ from common import calculation
 from common import importer
 from scipy.io import savemat
 from scipy.optimize import minimize
-from energy_garments import  energy_garments
+from energy_garments import energy_garments
 
 
 def main():

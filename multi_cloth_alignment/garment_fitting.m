@@ -2,8 +2,8 @@ function [] = garment_fitting( ...
     mesh_scan, label_scan, garments_scan, ...
     mesh_smpl, label_smpl, garments_smpl)
 
-global is_first;
 global n_smpl;
+global is_first;
 global result_dir;
 global smpl_param;
 global smpl_model;
@@ -27,8 +27,8 @@ if is_first == 1
     pose_shirt = smpl_param(11:82);
     pose_pants = smpl_param(11:82);
 
-    v_posed = calPosedMesh(smpl_model, smpl_param(11:82), ...
-        v_shaped, j_shaped, 0);
+    v_posed = calPosedMesh(smpl_model, ...
+        smpl_param(11:82), v_shaped, j_shaped, 0);
     v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
     
     mesh_smpl_shirt.vertices = v_posed;
@@ -43,12 +43,12 @@ else
     pose_shirt = pose_shirt.theta_shirt;
     pose_pants = pose_pants.theta_pants;
     
-    v_posed_shirt = calPosedMesh(smpl_model, pose_shirt, ...
-        v_shaped, j_shaped, 0);
+    v_posed_shirt = calPosedMesh(smpl_model, ...
+        pose_shirt, v_shaped, j_shaped, 0);
     v_posed_shirt = repmat(trans, n_smpl, 1) + v_posed_shirt * scale;
     
-    v_posed_pants = calPosedMesh(smpl_model, pose_pants, ...
-        v_shaped, j_shaped, 0);
+    v_posed_pants = calPosedMesh(smpl_model, ...
+        pose_pants, v_shaped, j_shaped, 0);
     v_posed_pants = repmat(trans, n_smpl, 1) + v_posed_pants * scale;
     
     mesh_smpl_shirt.vertices = v_posed_shirt;
@@ -76,11 +76,11 @@ save([result_dir, filesep, mesh_prefix, '_pose_shirt.mat'], 'theta_shirt');
 save([result_dir, filesep, mesh_prefix, '_pose_pants.mat'], 'theta_pants');  
 
 % combine all garments to one;
-m_comined = mesh_smpl;
-m_comined.vertices(garments_smpl.shirt.vertices_ind, :) = vertices_shirt;
-m_comined.vertices(garments_smpl.pants.vertices_ind, :) = vertices_pants;
-mesh_exporter([result_dir, filesep, mesh_prefix, ...
-    '_combined_full.obj'], m_comined, true);
+% m_comined = mesh_smpl;
+% m_comined.vertices(garments_smpl.shirt.vertices_ind, :) = vertices_shirt;
+% m_comined.vertices(garments_smpl.pants.vertices_ind, :) = vertices_pants;
+% mesh_exporter([result_dir, filesep, mesh_prefix, ...
+%     '_combined_full.obj'], m_comined, true);
 
 % for full mesh
 % [vertices_all, pose] = align_cloth(garments_scan, garments_smpl, ...
