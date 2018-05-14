@@ -1,14 +1,14 @@
-function [energy] = energy_garment(x, mesh_scan, mesh_smpl, ...
-    garment_smpl, garment_scan, smpl_param)
+function [energy] = energy_garment(x, mesh_scan, mesh_smpl, garment_smpl, garment_scan)
 
-% global n_smpl;
-% global smpl_model;
+global n_smpl;
+global is_first;
+global smpl_model;
+global smpl_param;
 
-L = x;
-% L = x(25:end, :);
-% theta = reshape(x(1:24, :), 72, 1)';
+L = x(25:end, :);
+theta = reshape(x(1:24, :), 72, 1)';
 
-sigma = 0.1;
+sigma = 0.2;
 energy = 0;
 
 % w_g = 1000;
@@ -17,11 +17,19 @@ energy = 0;
 % w_s = 200;
 % w_a = 20;
 
-w_g = 1;
-w_b = 20;
-w_c = 1.5;
-w_s = 1000;
-w_a = 20;
+if is_first == 1
+    w_g = 1;
+    w_b = 10;
+    w_c = 1.5;
+    w_s = 1000;
+    w_a = 2000;
+else
+    w_g = 1;
+    w_b = 10;
+    w_c = 1.5;
+    w_s = 200;
+    w_a = 2000; 
+end
 
 % 1st data term
 vertices_scan = mesh_scan.vertices(garment_scan.vertices_ind, :);
@@ -46,10 +54,6 @@ error_m2d = nearest_pts_m2d - L(mask_m2d, :);
 energy = energy + w_g * (...
     sum(sum(error_d2m.^2 ./ (error_d2m.^2 + sigma^2))) + ...
     sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2))));
-
-% nearest_ind = knnsearch(L, vertices_scan);
-% error_data = vertices_scan - L(nearest_ind, :);
-% energy = energy + w_g * sum(sum(error_data.^2 ./ (error_data.^2 + sigma^2)));
 
 % 2nd boundary term 
 vertices_smpl_boundary = L(garment_smpl.boundary_local_ind, :);
@@ -76,14 +80,14 @@ energy = energy + w_b * (...
     sum(sum(error_m2d.^2 ./ (error_m2d.^2 + sigma^2)))); 
 
 % 3rd coupling term
-% [beta, ~, trans, scale] = divideParam(smpl_param);
-% [v_shaped, j_shaped] = calShapedMesh(smpl_model, beta);
-% [v_posed] = calPosedMesh(smpl_model, theta, v_shaped, j_shaped, 0);
-% v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
-% v_posed_garment = v_posed(garment_smpl.vertices_ind, :);
-% 
-% error_coupling = norm(L - v_posed_garment, 'fro');
-% energy = energy + w_c * error_coupling;
+[beta, ~, trans, scale] = divideParam(smpl_param);
+[v_shaped, j_shaped] = calShapedMesh(smpl_model, beta);
+[v_posed] = calPosedMesh(smpl_model, theta, v_shaped, j_shaped, 0);
+v_posed = repmat(trans, n_smpl, 1) + v_posed * scale;
+v_posed_garment = v_posed(garment_smpl.vertices_ind, :);
+
+error_coupling = norm(L - v_posed_garment, 'fro');
+energy = energy + w_c * error_coupling;
 
 % 4th laplacian term:
 Z = mesh_smpl.adjacency_map( ...
@@ -98,7 +102,17 @@ error_laplacian = norm(product, 'fro');
 energy = energy + w_s * error_laplacian;
 
 % 5th boundary smoothness term
-    
+error_ring = 0;
+rings = garment_smpl.rings;
+for i = 1 : length(rings)
+    ring = rings{i};
+    vertices = mesh_smpl.vertices(ring, :);
+    for j = 2 : length(vertices) - 1
+        err = vertices(j - 1, :) + vertices(j + 1, :) - 2 * vertices(j, :);
+        error_ring = error_ring + sum(err.^2);
+    end
+end
+energy = energy + w_a * error_ring;
 
 end
 

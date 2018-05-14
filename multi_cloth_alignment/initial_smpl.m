@@ -1,4 +1,4 @@
-function [label_smpl, garments_smpl] = initial_smpl(mesh_folder)
+function [label_smpl, garments_smpl, mesh_smpl] = initial_smpl(mesh_folder)
 
 global n_smpl;
 global result_dir_base;	
@@ -10,11 +10,17 @@ label_smpl = label_smpl.seg_smpl;
 
 n_smpl = length(label_smpl);
 
+% load base smpl mesh
 mesh_smpl = mesh_parser('smpl_base_m.obj', 'smpl_model');
 mesh_smpl.colors = render_labels(label_smpl);
 
 % get the smpl model garments
 [garments_smpl, mesh_garments_smpl] = extract_garments(mesh_smpl, label_smpl);
+
+% get the smpl garments ring
+[rings_shirt, rings_pants] = garment_ring(garments_smpl, mesh_smpl, label_smpl);
+garments_smpl.shirt.rings = rings_shirt;
+garments_smpl.pants.rings = rings_pants;
 
 mesh_exporter([result_dir_base, filesep, 'smpl_garments.obj'], ...
     mesh_garments_smpl, true);
